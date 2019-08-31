@@ -10,7 +10,7 @@ namespace DataRetrievers
 {
     public abstract class DataRetriever<TProjection> : IDataRetriver<TProjection>
     {
-        public async Task<DataPage<TProjection>> RetrieveAsync(IEnumerable<Expression<Func<TProjection, bool>>> predicates, IEnumerable<Sorting> sorting, ulong skip = 0, uint take = 1)
+        public async Task<DataPage<TProjection>> RetrieveAsync(IEnumerable<Expression<Func<TProjection, bool>>> predicates, IEnumerable<Sorting> sorting, uint skip = 0, uint take = 1)
         {
             Guard.ArgumentNotNull(predicates, nameof(predicates));
             Guard.ArgumentHasNoNulls(predicates, nameof(predicates));
@@ -20,10 +20,13 @@ namespace DataRetrievers
             Guard.ArgumentHasNoNulls(sorting, nameof(sorting));
             GuardSortingShouldContainOnlyPropertyAccessors(sorting);
 
+            Guard.ArgumentConformsPredicate(() => skip >= 0, nameof(skip), "Argument should be non-negative.");
+            Guard.ArgumentConformsPredicate(() => take >= 0, nameof(take), "Argument should be positive.");
+
             var query = CreateBaseQuery();
             var filteredQuery = ApplyFiltering(query, predicates);
             var sortedQuery = ApplySorting(filteredQuery, sorting);
-            var framedQuery = ApplyFraming(sortedQuery, take, skip);
+            var framedQuery = ApplyFraming(sortedQuery, (int)take, (int)skip);
 
             var count = filteredQuery.LongCount();
             var rawDataPage = framedQuery.ToArray();
@@ -32,9 +35,9 @@ namespace DataRetrievers
             return new DataPage<TProjection>(dataPage, (ulong)count);
         }
 
-        private IQueryable<TProjection> ApplyFraming(IQueryable<TProjection> sortedQuery, uint take, ulong skip)
+        private IQueryable<TProjection> ApplyFraming(IQueryable<TProjection> sortedQuery, int take, int skip)
         {
-            return sortedQuery;
+            return sortedQuery.Skip(skip).Take(take);
         }
 
         private IQueryable<TProjection> ApplySorting(IQueryable<TProjection> filteredQuery, IEnumerable<Sorting> sorting)

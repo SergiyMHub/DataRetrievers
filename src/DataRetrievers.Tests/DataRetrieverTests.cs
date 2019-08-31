@@ -83,5 +83,30 @@ namespace DataRetrievers.Tests
             CollectionAssert.AreEqual(_fakeProjections.OrderBy(r => r.Id).ThenBy(r => r.Name).ToArray(), result.Data);
 
         }
+
+        [Test]
+        public async Task RetrieveAsync_ShouldApplyFramingOperations()
+        {
+            //arrange
+            var predicates = Enumerable.Empty<Expression<Func<FakeProjection, bool>>>();
+            var sorting = new[] { Sorting<FakeProjection>.Ascending(c => c.Id) };
+            var take = 3U;
+            var skip = 1U;
+
+            //act
+            var result = await _dataRetriever.RetrieveAsync(predicates, sorting, skip, take);
+
+            //assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(_fakeProjections.Length, result.TotalRecords);
+            Assert.AreEqual(take, result.Data.Count());
+            CollectionAssert.AreEqual(
+                _fakeProjections
+                    .OrderBy(r => r.Id)
+                    .Skip((int)skip)
+                    .Take((int)take)
+                    .ToArray(), 
+                result.Data);
+        }
     }
 }

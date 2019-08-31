@@ -7,7 +7,7 @@ namespace DataRetrievers
 {
     public interface IDataRetriver<TProjection>
     {
-        Task<DataPage<TProjection>> RetrieveAsync(IEnumerable<Expression<Func<TProjection, bool>>> predicates, IEnumerable<Sorting> sorting, ulong skip = 0, uint take = 1);
+        Task<DataPage<TProjection>> RetrieveAsync(IEnumerable<Expression<Func<TProjection, bool>>> predicates, IEnumerable<Sorting> sorting, uint skip = 0, uint take = 1);
     }
 
 }
