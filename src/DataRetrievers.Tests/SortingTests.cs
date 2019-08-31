@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace DataRetrievers.Tests
 {
-    public class SortingTests
+    public partial class SortingTests
     {
         [Test]
         public void DescendingShouldReturnDescendingSortingWithCorrectFieldName()
@@ -30,12 +30,6 @@ namespace DataRetrievers.Tests
             Assert.IsFalse(result.IsDescending);
 
 
-        }
-
-        public class FakeProjection
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
         }
     }
 }

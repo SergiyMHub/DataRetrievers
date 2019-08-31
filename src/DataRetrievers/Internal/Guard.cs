@@ -26,6 +26,36 @@ namespace DataRetrievers.Internal
             }
         }
 
+        public static void ArgumentHasNoNulls<T>(IEnumerable<T> items, string argumentName)
+        {
+            var idx = 0;
+            foreach (var arg in items)
+            {
+                if (arg == null)
+                {
+                    throw new ArgumentNullException($"{argumentName}[{idx}]");
+                }
+                idx++;
+            }
+        }
+
+        public static void ArgumentHasAll<T>(IEnumerable<T> argument, Func<T, bool> predicate, string argumentName)
+        {
+            ArgumentHasAll(argument, predicate, argumentName, "Some elements in enumeration conform predicate.");
+        }
+        public static void ArgumentHasAll<T>(IEnumerable<T> argument, Func<T, bool> predicate, string argumentName, string message)
+        {
+            var idx = 0;
+            foreach (var arg in argument)
+            {
+                if (!predicate(arg))
+                {
+                    throw new ArgumentException(message, $"{argumentName}[{idx}]");
+                }
+                idx++;
+            }
+        }
+
         public static void ArgumentNotNullOrEmpty(string argument, string argumentName)
         {
             Guard.ArgumentConformsPredicate(() => String.IsNullOrEmpty(argument), argumentName, "Argument is null or empty.");
