@@ -41,7 +41,6 @@ namespace DataRetrievers.Tests.Internal
             yield return p => p.Id + p.Id > 0;
 
             string stringConst = "Abra";
-            bool boolConst = true;
             yield return p => p.Name.StartsWith("Abra", StringComparison.OrdinalIgnoreCase);
             yield return p => p.Name.StartsWith(stringConst, StringComparison.OrdinalIgnoreCase);
             yield return p => p.Name.Contains("Abra", StringComparison.OrdinalIgnoreCase);
@@ -52,6 +51,7 @@ namespace DataRetrievers.Tests.Internal
             //...constant and constant comparison
             int intConstant = 3;
 
+            yield return p => true;
             yield return p => 3 == 3;
             yield return p => intConstant == 3;
 
