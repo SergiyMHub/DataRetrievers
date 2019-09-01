@@ -102,6 +102,7 @@ namespace DataRetrievers
             foreach (var predicate in predicates)
             {
                 PredicateGuard.PredicateIsSupported(predicate, $"{nameof(predicates)}[{idx}]");
+                idx++;
             }
         }
 
