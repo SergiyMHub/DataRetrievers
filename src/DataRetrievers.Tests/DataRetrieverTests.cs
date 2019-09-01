@@ -45,6 +45,22 @@ namespace DataRetrievers.Tests
         }
 
         [Test]
+        public async Task RetrieveAsync_ShouldRunPredicateValidation()
+        {
+            //arrange
+            var predicates = new Expression<Func<FakeProjection, bool>>[] {
+                ((p)=> p.Id + p.Id == 3)
+            };
+            //act
+            AsyncTestDelegate action = async () => await _dataRetriever.RetrieveAsync(predicates, new[] { Sorting<FakeProjection>.Ascending(c => c.Id) });
+
+            //assert
+            Assert.AreEqual("predicates[0]",
+                Assert.ThrowsAsync<ArgumentException>(action).ParamName);
+        }
+
+
+        [Test]
         public async Task RetrieveAsync_ShouldReturnRecordsConformingPredicates()
         {
             //arrange

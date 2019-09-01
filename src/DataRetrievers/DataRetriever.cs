@@ -98,7 +98,11 @@ namespace DataRetrievers
 
         private void GuardPredicatesContaineOnlyAllowedOperators(IEnumerable<Expression<Func<TProjection, bool>>> predicates)
         {
-            //not implemented yet
+            var idx = 0;
+            foreach (var predicate in predicates)
+            {
+                PredicateGuard.PredicateIsSupported(predicate, $"{nameof(predicates)}[{idx}]");
+            }
         }
 
         private void GuardSortingShouldContainOnlyPropertyAccessors(IEnumerable<Sorting> sorting)

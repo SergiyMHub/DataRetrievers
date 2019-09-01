@@ -13,7 +13,8 @@ namespace DataRetrievers.Internal
         {
             Guard.ArgumentNotNull(expr, nameof(expr));
 
-            return expr.Body.NodeType == ExpressionType.MemberAccess && (expr.Body as MemberExpression).Member.MemberType == MemberTypes.Property;
+            return expr.Body.NodeType == ExpressionType.MemberAccess 
+                && (expr.Body as MemberExpression).Member.MemberType == MemberTypes.Property;
         }
 
         public static bool HasProperty<TType>(string fieldName)
