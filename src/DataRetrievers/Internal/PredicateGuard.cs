@@ -35,10 +35,16 @@ namespace DataRetrievers.Internal
         public static IEnumerable<ExpressionType> SupportedUnaryOperators = new[]
         {
             ExpressionType.Convert,
-            /*ExpressionType.Not,
-            ExpressionType.Constant*/
+            //ExpressionType.Not,
+            //ExpressionType.Call
         };
 
+        public static IEnumerable<MethodInfo> SupportedStringFunctions = new[] {
+                typeof(string).GetMethod(nameof(String.StartsWith), new [] { typeof(string)}),
+                typeof(string).GetMethod(nameof(String.Contains), new [] { typeof(string)}),
+        };
+
+    
 
         /*
           grouping operator
@@ -63,6 +69,10 @@ namespace DataRetrievers.Internal
             {
                 return;
             }
+            else if (IsBooleanCall(predicate.Body))
+            {
+                return;
+            }
             else if (IsSupportedUnaryOperation(predicate.Body.NodeType))
             {
 
@@ -70,7 +80,7 @@ namespace DataRetrievers.Internal
             else if (IsSupportedComparison(predicate.Body.NodeType))
             {
                 var binaryOperation = predicate.Body as BinaryExpression;
-                if (IsSupportedComparisonOperand(binaryOperation.Left) 
+                if (IsSupportedComparisonOperand(binaryOperation.Left)
                     && IsSupportedComparisonOperand(binaryOperation.Right))
                 {
                     return;
@@ -78,6 +88,11 @@ namespace DataRetrievers.Internal
             }
 
             throw new ArgumentException("Not supported predicate type.", argumentName);
+        }
+
+        private static bool IsBooleanCall(Expression expr)
+        {
+            return IsStringFunction(expr);
         }
 
         private static bool IsSupportedUnaryOperation(ExpressionType nodeType)
@@ -92,7 +107,21 @@ namespace DataRetrievers.Internal
 
         private static bool IsSupportedComparisonOperand(Expression expr)
         {
-            return IsSimpleTypeProperty(expr) || IsSimpleTypeConstant(expr);
+            return IsSimpleTypeProperty(expr) || IsSimpleTypeConstant(expr) || IsStringFunction(expr);
+        }
+
+        private static bool IsStringFunction(Expression expr)
+        {
+            if (expr.Type == typeof(bool) && expr.NodeType == ExpressionType.Call)
+            {
+                var callExpr = expr as MethodCallExpression;
+                if (SupportedStringFunctions.Contains(callExpr.Method))
+                {
+                    var argumentExpr = callExpr.Arguments.Single();
+                    return IsSimpleTypeConstant(argumentExpr) || IsSimpleTypeProperty(argumentExpr);
+                }
+            }
+            return false;
         }
 
         private static bool IsSimpleTypeConstant(Expression expr)

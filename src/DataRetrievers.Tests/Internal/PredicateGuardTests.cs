@@ -39,6 +39,12 @@ namespace DataRetrievers.Tests.Internal
             
             yield return p => p.ObjectProperty == null;
             yield return p => p.Id + p.Id > 0;
+
+            string stringConst = "Abra";
+            bool boolConst = true;
+            yield return p => p.Name.StartsWith("Abra", StringComparison.OrdinalIgnoreCase);
+            yield return p => p.Name.StartsWith(stringConst, StringComparison.OrdinalIgnoreCase);
+            yield return p => p.Name.Contains("Abra", StringComparison.OrdinalIgnoreCase);
         }
 
         private static IEnumerable<Expression<Func<FakeProjection, bool>>> PositiveCases()
@@ -70,6 +76,17 @@ namespace DataRetrievers.Tests.Internal
             yield return p => p.NullableIntProperty < 3;
             yield return p => p.NullableIntProperty >= 3;
             yield return p => p.NullableIntProperty <= 3;
+
+            //...String.StartWith and String.Contains cases
+            string stringConst = "Abra";
+            bool booleanConst = true;
+            yield return p => p.Name.StartsWith("Abra");
+            yield return p => p.Name.StartsWith(stringConst);
+            yield return p => p.Name.StartsWith("Abra") == true;
+            yield return p => p.Name.StartsWith(stringConst) == booleanConst;
+
+            yield return p => p.Name.Contains("Abra");
+            yield return p => p.Name.Contains(stringConst);
 
         }
     }
