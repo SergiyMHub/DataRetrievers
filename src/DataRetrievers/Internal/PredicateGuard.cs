@@ -44,23 +44,30 @@ namespace DataRetrievers.Internal
                 typeof(string).GetMethod(nameof(String.Contains), new [] { typeof(string)}),
         };
 
-    
+
 
         /*
-          grouping operator
-                comparison operator | unary logical operator | binary logical operator | grouping operator | boolean property
-         
-          comparison operator
-                property
-                constant 
-            
-          unary logical operator
-                boolean property
-
-          binary logical operator
+          Predicate = Negation | ( BoolFunctionCall | BoolProperty | BoolConstant | Comparison )
+          Negation = NOT ( BoolFunctionCall | BoolProperty | BoolConstant | Comparison )
+          BoolFunctionCall = StartsWithFunction | ContainsFunction
           
-            
-                
+          StartsWithFunction: String::StartsWith StringProperty, StringConstant
+          ContainsFunction: String::Contains StringProperty, StringConstant
+          
+          StringConstant: StringLiteral, CapturedStringVariable 
+          BoolConstant: BoolLiteral, CapturedBoolVariable
+
+          Comparison = LeftComparisonOperand ( == | != | < | > | <= | >= ) RightComparisonOperand
+          LeftComparisonOperand = BoolFunctionCall | BoolProperty | BoolConstant | StringProperty | StringConstant | SimpleTypeProperty
+          RightComparisonOperand = SimpleTypeLiteral | CapturedSimpleTypeConstant
+
+          SimpleTypeLiteral = StringLiteral | BoolLiteral | NETSimpleTypeLiteral
+          CapturedSimpleTypeConstant = CapturedStringVariable | CapturedBoolVariable | NETSimpleTypeCapturedVariable 
+
+          SimpleType = SimpleTypeNullable | NETPrimitiveType | String
+          SimpleTypeNullable = NULLABLE NETPrimitiveType
+         
+
              */
 
         public static void PredicateIsSupported<T>(Expression<Func<T, bool>> predicate, string argumentName)

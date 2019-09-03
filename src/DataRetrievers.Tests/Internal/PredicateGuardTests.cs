@@ -58,6 +58,9 @@ namespace DataRetrievers.Tests.Internal
             //...boolean property
             yield return p => p.BoolProperty;
             yield return p => p.BoolProperty == true;
+
+            //...negated bool property
+            yield return p => !p.BoolProperty;
             //...property and constant comparison 
             yield return p => p.Id == 3;
             yield return p => p.Id != 3;
