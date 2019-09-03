@@ -69,7 +69,12 @@ namespace DataRetrievers.Internal
             {
                 return;
             }
+
             else if (IsBooleanCall(predicate.Body))
+            {
+                return;
+            }
+            else if (IsBooleanProperty(predicate.Body))
             {
                 return;
             }
@@ -86,8 +91,13 @@ namespace DataRetrievers.Internal
                     return;
                 }
             }
-
+            
             throw new ArgumentException("Not supported predicate type.", argumentName);
+        }
+
+        private static bool IsBooleanProperty(Expression expr)
+        {
+            return IsSimpleTypeProperty(expr) && expr.Type == typeof(bool);
         }
 
         private static bool IsBooleanCall(Expression expr)

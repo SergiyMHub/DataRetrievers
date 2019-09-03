@@ -55,6 +55,9 @@ namespace DataRetrievers.Tests.Internal
             yield return p => 3 == 3;
             yield return p => intConstant == 3;
 
+            //...boolean property
+            yield return p => p.BoolProperty;
+            yield return p => p.BoolProperty == true;
             //...property and constant comparison 
             yield return p => p.Id == 3;
             yield return p => p.Id != 3;
