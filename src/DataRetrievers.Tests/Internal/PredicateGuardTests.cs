@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace DataRetrievers.Tests.Internal
@@ -32,11 +33,25 @@ namespace DataRetrievers.Tests.Internal
             Assert.Catch(typeof(ArgumentException), action);
         }
 
+        [MethodImpl(MethodImplOptions.NoOptimization)]
         private static IEnumerable<Expression<Func<FakeProjection, bool>>> NegativeCases()
         {
-            
+            int intConstant = 3;
+
             //...wrong comparison
-            
+            yield return p => 3 == p.Id;
+            yield return p => 3 != p.Id;
+            yield return p => 3 > p.Id;
+            yield return p => 3 < p.Id;
+            yield return p => 3 >= p.Id;
+            yield return p => 3 <= p.Id;
+
+            //... p => 3==3
+            yield return Expression.Lambda<Func<FakeProjection, bool>>(
+                Expression.Equal(Expression.Constant(3), Expression.Constant(3)), 
+                Expression.Parameter(typeof(FakeProjection))); 
+            yield return p => intConstant == 3;
+
             yield return p => p.ObjectProperty == null;
             yield return p => p.Id + p.Id > 0;
 
@@ -46,14 +61,13 @@ namespace DataRetrievers.Tests.Internal
             yield return p => p.Name.Contains("Abra", StringComparison.OrdinalIgnoreCase);
         }
 
+        [MethodImpl(MethodImplOptions.NoOptimization)]
         private static IEnumerable<Expression<Func<FakeProjection, bool>>> PositiveCases()
         {
             //...constant and constant comparison
-            int intConstant = 3;
-
             yield return p => true;
-            yield return p => 3 == 3;
-            yield return p => intConstant == 3;
+
+
 
             //...boolean property
             yield return p => p.BoolProperty;
@@ -68,12 +82,7 @@ namespace DataRetrievers.Tests.Internal
             yield return p => p.Id > 3;
             yield return p => p.Id <= 3;
             yield return p => p.Id >= 3;
-            yield return p => 3 == p.Id;
-            yield return p => 3 != p.Id;
-            yield return p => 3 > p.Id;
-            yield return p => 3 < p.Id;
-            yield return p => 3 >= p.Id;
-            yield return p => 3 <= p.Id;
+            
 
             //...nullable simple type support
             yield return p => p.NullableIntProperty == 3;
